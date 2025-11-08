@@ -1,0 +1,798 @@
+-- Practice problem 1
+/*
+ select distinct
+     job_location
+ from 
+     job_postings_fact
+ order by job_location asc;          
+*/
+
+-- Practice problem 2
+/*
+select
+    job_id,
+    job_title_short,
+    job_location,
+    job_via
+from job_postings_fact
+order by job_location asc;
+*/
+-- Practice problem  3
+/*
+select
+    job_id,
+    job_title_short,
+    job_location,
+    job_via,
+    salary_year_avg
+from job_postings_fact
+where 
+    job_title_short = 'Data Engineer'
+*/
+-- Practice problem 4
+/*
+select
+    job_id,
+    job_title_short,
+    job_location,
+    job_via,
+    salary_year_avg
+from job_postings_fact
+where salary_year_avg > 100000 and salary_year_avg < 200000
+order by salary_year_avg desc
+*/
+-- Practice problem 5
+/*
+select
+    job_id,
+    job_title_short,
+    job_location,
+    job_via,
+    salary_year_avg
+from job_postings_fact
+where salary_year_avg between 100000 and  200000
+order by salary_year_avg desc
+*/
+
+-- Practice problem 6
+/*
+select
+    job_id,
+    job_title_short,
+    job_location,
+    job_via,
+    salary_year_avg
+from 
+    job_postings_fact
+where 
+    job_title_short in ('Data Analyst','Data Engineer','Data Scientist');
+*/
+
+-- Practice problem 7
+/*
+select
+    job_id,
+    job_title_short,
+    job_location,
+    job_via,
+    salary_year_avg
+from 
+    job_postings_fact
+where 
+    job_location = 'Tampa, FL'
+*/
+
+/*
+select
+    job_id,
+    job_title_short,
+    job_location,
+    job_via,
+    salary_year_avg,
+    job_schedule_type
+from 
+    job_postings_fact
+where
+    job_schedule_type <> 'Part-time';
+*/
+
+-- Main Practice Problem 1
+/*
+select
+    job_id,
+    job_title_short,
+    job_location,
+    job_via,
+    salary_year_avg
+from 
+    job_postings_fact
+where 
+    job_location in ('Boston MA','Anywhere') and
+    (
+        (job_title_short = 'Data Analyst' and salary_year_avg > 100000)    or
+        (job_title_short = 'Business Analyst' and salary_year_avg > 70000)
+    )
+order by 
+    salary_year_avg desc
+*/
+
+
+--- WILDCARDS ---
+/*
+select
+    job_id,
+    job_title,
+    job_title_short,
+    job_location,
+    job_via,
+    salary_year_avg
+from 
+    job_postings_fact
+where
+    job_title like '%analyst%';
+    -- job_title like '%Business%analyst%'
+*/
+
+-- Practice problems under WildCards
+/*
+Practice Problem 1
+Question:
+In the company_dim table, find all company names that include "Tech" immediately followed by any single character. Return the name column.
+Solution:
+We need to find company names where "Tech" is followed by exactly one character (e.g., "TechA", "Tech1", "Tech_", but not "TechAI" or "Tech").
+We can use the LIKE operator with a single-character wildcard _
+*/
+----    1       ----
+/*
+select
+    name
+from 
+    company_dim
+where name like '%Tech_%';
+*/
+
+/*
+Practice Problem 2
+Question:
+Find all job postings in the job_postings_fact where the job_title is exactly "Engineer" and one character followed after the term. Get the job_id, job_title, and job_posted_date.
+Solution:
+We interpret:
+*/
+--"Engineer" followed by exactly one character in the job_title.
+/*
+select
+    job_id,
+    job_title,
+    job_posted_date
+from 
+    job_postings_fact
+where 
+    job_title like 'Engineer_'
+*/
+
+-- Alias
+-- AS --
+
+/*
+select
+    jpc.job_id,
+    job_title_short as job_title,
+    job_location as location,
+    job_via as online_platform,
+    salary_year_avg as salary
+from job_postings_fact as jpc
+
+-- or from job_postings_fact  jpc
+*/
+/*
+select
+    job_id,
+    job_title_short,
+    job_location,
+    job_via as job_posted_site,
+    job_posted_date,
+    salary_year_avg avg_yearly_salary
+from 
+    job_postings_fact
+*/
+
+-- BASIC Practice problem 2
+/*
+select
+    job_title,
+    job_location as location,
+    salary_year_avg as salary
+from 
+    job_postings_fact
+where 
+    (job_title like '%Data%' or job_title like '%Business%') and
+    job_title like '%Analyst%' and
+    job_title not  like '%Senior%'
+*/
+-- operations inSQL
+/*
+select 
+    project_company,
+    nerd_id,
+    nerd_role,
+    hours_rate as rate_original,
+    hours_rate - 5 as rate_drop,
+    hours_rate + 5 as rate_hike
+from 
+    invoices_fact
+*/
+
+/*
+select 
+    project_company,
+    nerd_id,
+    nerd_role,
+    hours_rate as rate_original,
+    hours_rate + 5 as rate_hike,
+    hours_spent,
+    (hours_rate + 5) * hours_spent as project_total 
+from 
+    invoices_fact
+where 
+    project_total > 1000
+-- Project total (after hike) = rate * hours_spent
+*/
+
+/*
+select 
+    activity_id,
+    hours_spent,
+    hours_spent % 8 as extra_hours
+from 
+    invoices_fact
+where
+    (hours_spent between 8 and 16) and
+    extra_hours > 0
+order by
+    hours_spent asc
+ */
+
+/* 
+select
+    activity_id,
+    hours_spent,
+    hours_spent + hours_rate as priority 
+from 
+    invoices_fact
+order by priority desc    
+*/
+
+-- To calculate thre cost efficiency of each activity / task. a lower ratio indicates a more cost-effient task
+/*
+select
+    activity_id,
+    hours_spent,
+    hours_spent / hours_rate as efficieny_rate 
+from 
+    invoices_fact
+*/
+
+/*
+select
+    count(job_title_short) as count_row,
+    sum(salary_year_avg) as Salary_Sum,
+    max(salary_year_avg) as Max_Salary,
+    min(salary_year_avg) as Min_Salary,
+    avg(salary_year_avg) as Avg_Salary
+from 
+    job_postings_fact
+*/
+
+/*
+select
+    --count(distinct job_title_short) as job_type_total,
+    --job_location,
+    --job_via,
+    max(salary_ as year_avg) as Max_Salary,
+    min(salary_year_avg) as Min_Salary,
+    avg(salary_year_avg) as Avg_salary
+from 
+    job_postings_fact
+where 
+    job_title_short = 'Data Analyst'
+*/
+
+/*
+select
+    job_title_short as jobs,
+    count(job_title_short) as job_count,
+    avg(salary_year_avg) as Avg_Salary,
+    max(salary_year_avg) as Max_Salary,
+    min(salary_year_avg) as Min_Salary
+from 
+    job_postings_fact
+group by
+    job_title_short
+having
+    count(job_title_short) > 100
+order by 
+    Avg_Salary asc
+*/
+
+/*
+-- Question 1
+select
+    job_id,
+    job_title_short,
+    job_location,
+    job_via,
+    count(salary_year_avg) as total_count,
+    sum(salary_year_avg) as sum_Yearly_Salary
+from 
+    job_postings_fact
+where
+    (job_work_from_home = 1) and
+    salary_year_avg > 0
+group by
+    job_title_short
+having 
+    sum_Yearly_Salary / total_count --as total_avg_salary
+*/
+
+--Question 2
+/*
+select
+    job_id,
+    job_title_short,
+    count(job_health_insurance) as total_health_insurance
+from 
+    job_postings_fact
+where
+    job_health_insurance = 1
+group by
+    job_title_short;
+*/
+
+/*3
+select
+    --job_title_short,
+    job_country,
+    count(job_id) job_Count_per_Country
+from 
+    job_postings_fact
+group by
+    job_country
+*/
+
+/*
+select 
+    project_id,
+--    hours_spent,
+ --   hours_rate as rate_original,
+ --   hours_rate + 5 as rate_hike,
+    sum(hours_spent * hours_rate) as project_original_cost,
+    sum(hours_spent * (hours_rate + 5)) as project_projected_cost
+from 
+    invoices_fact
+group by
+    project_id
+*/
+
+/*
+select
+    job_id,
+    job_title_short,
+    job_location,
+    job_via,
+    salary_year_avg
+from 
+    job_postings_fact
+where
+    salary_year_avg is not null
+order by
+    salary_year_avg asc
+*/
+
+/*
+select 
+    skill_id,
+    skills,
+    type
+from
+    skills_dim
+where
+    type is null
+*/
+
+/*
+select
+    job_id,
+    job_title_short,
+    salary_year_avg,
+    salary_hour_avg
+from 
+    job_postings_fact
+where
+    salary_hour_avg is null
+    and salary_year_avg is null
+Group by
+    job_title_short
+*/
+    
+
+-- JOINS
+-- LEFT JOIN
+/* 
+select 
+    job_postings_fact.job_id,
+    job_postings_fact.job_title_short as title,
+    --job_postings_fact.company_id,
+    --companies.company_id,
+    companies.name as Company
+from
+    job_postings_fact
+left join company_dim as companies
+    on job_postings_fact.company_id = companies.company_id
+*/
+
+-- Right JOIN
+/*
+select 
+    job_postings_fact.job_id,
+    job_postings_fact.job_title_short as title,
+    companies.name as Company
+from
+    job_postings_fact
+right  join company_dim as companies
+    on job_postings_fact.company_id = companies.company_id
+*/
+
+/*
+select 
+    job_postings.job_id,
+    job_postings.job_title_short as title,
+    skills_to_jobs.skill_id,
+    skills.skills
+from
+    job_postings_fact as job_postings
+inner  join skills_job_dim as skills_to_jobs on job_postings.job_id = skills_to_jobs.job_id
+inner join skills_dim as skills on skills_to_jobs.skill_id = skills.skill_id;
+*/
+
+-- PRACTICE PROBLEMS 1
+/*
+select
+    job_postings_fact.job_id,
+    job_postings_fact.job_title as Job_title,
+    company.name
+from job_postings_fact
+left join company_dim as company on job_postings_fact.company_id = company.company_id
+where job_postings_fact.job_title like '%Data Scientist%'
+*/
+
+-- PRACTICE PROBLEMS 2
+/*
+SELECT 
+    job_postings_fact.job_title,
+    skill_names.skills as skills,
+    job_postings_fact.job_location,
+    job_postings_fact.job_health_insurance
+FROM 
+    job_postings_fact
+LEFT JOIN  skills_job_dim as skills_to_jobs on job_postings_fact.job_id = skills_to_jobs.job_id
+LEFT JOIN skills_dim as skill_names on skills_to_jobs.skill_id = skill_names.skill_id  
+WHERE
+    (job_location = 'New York') AND
+    (job_health_insurance = 1);
+*/ 
+
+
+SELECT DISTINCT  
+    skill_names.skills as skills,
+    AVG(job_postings_fact.salary_year_avg) AS Average_Salary_For_Skill,
+    count(skills) AS Number_of_postings
+    --count(skills_to_jobs.job_id) AS Number_of_postings
+FROM 
+    job_postings_fact
+LEFT JOIN  skills_job_dim AS skills_to_jobs ON job_postings_fact.job_id = skills_to_jobs.job_id
+LEFT JOIN skills_dim AS skill_names on skills_to_jobs.skill_id = skill_names.skill_id 
+GROUP BY skills
+ORDER BY Average_Salary_For_Skill  DESC;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
