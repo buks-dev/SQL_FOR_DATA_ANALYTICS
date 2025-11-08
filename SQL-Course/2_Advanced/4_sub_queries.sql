@@ -105,7 +105,7 @@ WITH remote_jobs_skills AS (
         skills_job_dim AS sjd
     INNER JOIN job_postings_fact ON job_postings_fact.job_id = sjd.job_id
     WHERE 
-        job_postings_fact.job_location = 'Anywhere' AND 
+        job_postings_fact.job_work_from_home = TRUE AND 
         job_postings_fact.job_title_short = 'Data Analyst'
     GROUP BY skill_id
 )
