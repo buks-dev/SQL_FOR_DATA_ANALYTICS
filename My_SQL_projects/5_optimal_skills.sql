@@ -57,6 +57,7 @@ LIMIT 25;
 -- But this is more concise and easy to read.
 
 SELECT
+
     skills_dim.skill_id,
     skills_dim.skills,
     COUNT(skills_job_dim.job_id) demand_count,
@@ -76,7 +77,8 @@ HAVING
 ORDER BY
     avg_salary DESC,
     demand_count DESC
-LIMIT 25;
+LIMIT 225;
+
 
 
 /*
